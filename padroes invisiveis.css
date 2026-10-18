@@ -1,0 +1,493 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg: #050610;
+  --panel: #0a0d1b;
+  --cyan: #6df7ff;
+  --purple: #9b72ff;
+  --text: #f1f3ff;
+  --muted: #8a90ad;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+
+button, input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.background-grid {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 75% 25%, #30205b40, transparent 45%),
+    linear-gradient(#7b8dff0b 1px, transparent 1px),
+    linear-gradient(90deg, #7b8dff0b 1px, transparent 1px);
+  background-size: auto, 48px 48px, 48px 48px;
+}
+
+/* CABEÇALHO */
+.topbar {
+  position: relative;
+  min-height: 78px;
+  padding: 0 7%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #ffffff12;
+}
+
+.creator-credit {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 0.6px;
+  color: #a7acc4;
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.logo {
+  color: var(--text);
+  text-decoration: none;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.logo span {
+  color: var(--cyan);
+}
+
+.status, .eyebrow {
+  color: var(--muted);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.status span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #65ffc3;
+  box-shadow: 0 0 12px #65ffc3;
+}
+
+/* APRESENTAÇÃO */
+.hero {
+  padding: 65px 7%;
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  align-items: center;
+  gap: 42px;
+}
+
+.eyebrow {
+  color: var(--cyan);
+  line-height: 1.8;
+}
+
+h1 {
+  margin: 24px 0;
+  font-size: clamp(38px, 4vw, 62px);
+  line-height: 1.15;
+  letter-spacing: -2px;
+}
+
+h1 span {
+  display: block;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.75em;
+  letter-spacing: -1px;
+  background: linear-gradient(100deg, var(--cyan), #a6b2ff, var(--purple));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.description, .section-description {
+  color: #a7acc4;
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+/* BOTÕES */
+.primary {
+  min-height: 46px;
+  padding: 0 19px;
+  border: 1px solid var(--cyan);
+  background: var(--cyan);
+  color: #050610;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  transition: 0.25s;
+}
+
+.primary:hover {
+  background: white;
+  box-shadow: 0 0 30px #6df7ff50;
+  transform: translateY(-2px);
+}
+
+#generateBtn {
+  margin-top: 26px;
+}
+
+/* INDICADORES */
+.metrics {
+  display: flex;
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.metrics div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.metrics strong {
+  color: var(--cyan);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 20px;
+}
+
+.metrics span {
+  color: var(--muted);
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+/* LABORATÓRIO 3D */
+.visual-lab {
+  height: 490px;
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #a3a8ff25;
+  background: radial-gradient(ellipse at center, #30205b35, transparent 68%), #080a18;
+  box-shadow: inset 0 0 70px #665cff0b, 0 0 60px #6a4bff09;
+}
+
+#scene3d {
+  position: absolute;
+  inset: 0;
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+#scene3d:active {
+  cursor: grabbing;
+}
+
+#scene3d canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: none;
+}
+
+.lab-label, .object-info, .interaction-hint {
+  position: absolute;
+  z-index: 2;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+.lab-label {
+  top: 20px;
+  color: var(--muted);
+}
+
+.lab-label .live {
+  color: #65ffc3;
+}
+
+.object-info {
+  bottom: 43px;
+  color: var(--cyan);
+}
+
+.object-info span:last-child {
+  color: var(--muted);
+}
+
+.interaction-hint {
+  bottom: 18px;
+  color: var(--muted);
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.7px;
+}
+
+/* EXPLORAÇÃO MATEMÁTICA */
+.explore-section {
+  padding: 65px 7% 45px;
+  border-top: 1px solid #ffffff12;
+  background: linear-gradient(180deg, #080a16, #050610);
+}
+
+.explore-section h2 {
+  margin-top: 12px;
+  font-size: clamp(26px, 3vw, 38px);
+  letter-spacing: -1px;
+}
+
+.section-description {
+  margin-top: 10px;
+}
+
+/* PESQUISA */
+.search-box {
+  display: flex;
+  gap: 10px;
+  max-width: 760px;
+  margin-top: 26px;
+}
+
+.search-box input {
+  flex: 1;
+  min-width: 0;
+  padding: 0 16px;
+  min-height: 48px;
+  border: 1px solid #ffffff25;
+  outline: none;
+  color: var(--text);
+  background: #0b0d1b;
+}
+
+.search-box input:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 18px #6df7ff12;
+}
+
+.search-box input::placeholder {
+  color: #717791;
+}
+
+.search-message {
+  min-height: 24px;
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* OPÇÕES DE FORMAS */
+.shape-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.shape-btn {
+  padding: 12px 15px;
+  border: 1px solid #ffffff20;
+  background: #ffffff04;
+  color: #b7bdd4;
+  font-size: 12px;
+  transition: 0.2s;
+}
+
+.shape-btn:hover, .shape-btn.active {
+  color: var(--cyan);
+  border-color: #6df7ff80;
+  background: #6df7ff0b;
+}
+
+/* CONTROLE DE COMPLEXIDADE */
+.controls {
+  max-width: 450px;
+  margin-top: 30px;
+}
+
+.controls label {
+  display: flex;
+  justify-content: space-between;
+  color: #b7bdd4;
+  font-size: 12px;
+}
+
+.controls label span {
+  color: var(--cyan);
+}
+
+.controls input {
+  width: 100%;
+  margin-top: 16px;
+  accent-color: var(--cyan);
+}
+
+/* PAINEL DE FÓRMULAS */
+.formula-panel {
+  max-width: 760px;
+  margin-top: 42px;
+  padding: 28px;
+  border: 1px solid #6df7ff25;
+  background: linear-gradient(120deg, #0c1324, #0a0b19);
+}
+
+.formula-panel h3 {
+  margin-top: 14px;
+  font-size: 20px;
+}
+
+.equation {
+  margin: 20px 0;
+  color: var(--cyan);
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(18px, 3vw, 28px);
+  overflow-wrap: anywhere;
+}
+
+.formula-panel p:not(.eyebrow) {
+  color: #a7acc4;
+  font-size: 13px;
+  line-height: 1.9;
+}
+
+.formula-panel .formula-details {
+  margin-top: 10px;
+  color: var(--muted);
+}
+
+/* FRASE FINAL DA EXPLORAÇÃO */
+.footer-note {
+  margin-top: 55px;
+  padding-top: 22px;
+  border-top: 1px solid #ffffff12;
+  color: #676d89;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  line-height: 2;
+}
+
+/* RODAPÉ */
+.site-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 24px 20px;
+  border-top: 1px solid #ffffff12;
+  text-align: center;
+}
+
+.site-footer p {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.7px;
+  line-height: 1.8;
+  color: #8a90ad;
+}
+
+/* TABLETS */
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .intro {
+    max-width: 650px;
+  }
+
+  .visual-lab {
+    height: 440px;
+  }
+}
+
+/* CELULARES */
+@media (max-width: 600px) {
+  .topbar {
+    min-height: 100px;
+    padding: 12px 5%;
+    align-items: flex-start;
+  }
+
+  .creator-credit {
+    top: 68px;
+    max-width: 90%;
+    font-size: 9px;
+  }
+
+  .logo {
+    font-size: 9px;
+  }
+
+  .status {
+    font-size: 7px;
+    letter-spacing: 0;
+  }
+
+  .hero, .explore-section {
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+
+  .hero {
+    gap: 35px;
+  }
+
+  .metrics {
+    gap: 20px;
+  }
+
+  .visual-lab {
+    height: 360px;
+  }
+
+  .search-box {
+    flex-direction: column;
+  }
+
+  .search-box .primary {
+    width: 100%;
+  }
+
+  .formula-panel {
+    padding: 20px;
+  }
+}
