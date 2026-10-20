@@ -4,133 +4,170 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#050610">
-  <title>Padrões Invisíveis — Laboratório Matemático</title>
-  <meta name="description" content="Explore formas matemáticas em um universo 3D interativo.">
+  <meta name="theme-color" content="#08090b">
+  <title>Padrões Invisíveis | Mariana Lima Corrêa Fé</title>
   <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="background-grid"></div>
-
-  <header class="topbar">
-    <span class="creator-credit">Criado por Mariana Lima Correia Ferro</span>
-    <a href="#" class="logo">◈ PADRÕES <span>INVISÍVEIS</span></a>
-    <div class="status"><span></span> LABORATÓRIO INTERATIVO</div>
-  </header>
-
-  <main>
-    <section class="hero">
-      <div class="intro">
-        <p class="eyebrow">MATEMÁTICA · ARTE · EXPLORAÇÃO</p>
-        <h1>O universo tem <span>padrões ocultos.</span></h1>
-        <p class="description">
-          Descubra as regras matemáticas por trás de formas extraordinárias.
-          Gire, explore e crie composições em três dimensões.
-        </p>
-
-        <button id="generateBtn" class="primary">✳ GERAR COMPOSIÇÃO</button>
-
-        <div class="metrics">
-          <div><strong>∞</strong><span>POSSIBILIDADES</span></div>
-          <div><strong>3D</strong><span>EXPLORAÇÃO</span></div>
-          <div><strong>01</strong><span>REGRA POR VEZ</span></div>
-        </div>
-      </div>
-
-      <section class="visual-lab">
-        <div class="lab-label">
-          <span>VISUALIZAÇÃO 3D</span>
-          <span class="live">● AO VIVO</span>
-        </div>
-
-        <div id="scene3d" aria-label="Objeto matemático 3D interativo"></div>
-
-        <div class="object-info">
-          <span id="shapeName">ESPIRAL 3D</span>
-          <span id="shapeNumber">FORM. 001</span>
-        </div>
-
-        <div class="interaction-hint">
-          ARRASTE PARA GIRAR · SCROLL PARA APROXIMAR
-        </div>
-      </section>
-    </section>
-
-    <section class="explore-section" id="explorer">
-      <p class="eyebrow">EXPLORE O DESCONHECIDO</p>
-      <h2>O que você quer descobrir?</h2>
-      <p class="section-description">
-        Pesquise uma estrutura matemática ou escolha uma das opções.
-      </p>
-
-      <form id="searchForm" class="search-box">
-        <input
-          id="shapeSearch"
-          type="search"
-          placeholder="Ex.: esfera, toro, fractal, Möbius..."
-          autocomplete="off"
-          aria-label="Pesquisar forma matemática"
-        >
-        <button type="submit" class="primary">EXPLORAR ↗</button>
-      </form>
-
-      <p id="searchMessage" class="search-message">
-        Experimente pesquisar uma forma matemática.
-      </p>
-
-      <div class="shape-options">
-        <button class="shape-btn active" data-shape="spiral">Espiral</button>
-        <button class="shape-btn" data-shape="sphere">Esfera</button>
-        <button class="shape-btn" data-shape="torus">Toro</button>
-        <button class="shape-btn" data-shape="mobius">Fita de Möbius</button>
-        <button class="shape-btn" data-shape="knot">Nó toroidal</button>
-        <button class="shape-btn" data-shape="helix">Hélice</button>
-        <button class="shape-btn" data-shape="wave">Onda 3D</button>
-        <button class="shape-btn" data-shape="crystal">Cristal</button>
-        <button class="shape-btn" data-shape="sierpinski">Triângulo de Sierpiński</button>
-        <button class="shape-btn" data-shape="klein">Superfície de Klein</button>
-      </div>
-
-      <div class="controls">
-        <label for="complexity">
-          Complexidade
-          <span id="complexityValue">60</span>
-        </label>
-        <input id="complexity" type="range" min="10" max="100" value="60">
-      </div>
-
-      <article class="formula-panel">
-        <p class="eyebrow">MATEMÁTICA POR TRÁS DA FORMA</p>
-        <h3 id="formulaTitle">Espiral de Arquimedes</h3>
-        <div id="formulaEquation" class="equation">r = a + bθ</div>
-        <p id="formulaExplanation">
-          O raio aumenta proporcionalmente ao ângulo, criando uma espiral.
-        </p>
-        <p id="formulaDetails" class="formula-details">
-          Arraste o objeto para explorar sua geometria.
-        </p>
-      </article>
-
-      <p class="footer-note">
-        CADA FORMA ESCONDE UMA REGRA. CADA REGRA ABRE UM UNIVERSO.
-      </p>
-    </section>
-  </main>
 
   <script type="importmap">
   {
     "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+      "three": "https://unpkg.com/three@0.166.1/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.166.1/examples/jsm/"
     }
   }
   </script>
 
   <script type="module" src="script.js"></script>
+</head>
 
-  <footer class="site-footer">
-    <p>UI/UX Design &amp; Arquitetura Digital — Mariana Lima Correia Ferro</p>
+<body>
+  <header class="topbar">
+    <a href="#" class="brand">
+      <span class="logo">◉</span>
+      <span>
+        <strong>PADRÕES INVISÍVEIS</strong>
+        <small>LABORATÓRIO MATEMÁTICO</small>
+        <em>POR MARIANA LIMA CORRÊA FÉ</em>
+      </span>
+    </a>
+
+    <nav>
+      <a href="#explorar">EXPLORAR</a>
+      <a href="#matematica">MATEMÁTICA</a>
+      <a href="#sobre">SOBRE</a>
+    </nav>
+
+    <div class="status"><i></i> SISTEMA ONLINE</div>
+  </header>
+
+  <main class="layout" id="explorar">
+    <aside class="panel sidebar">
+      <div class="eyebrow">01 / GEOMETRIAS</div>
+      <div id="shape-list" class="shape-list"></div>
+
+      <hr>
+
+      <div class="rowlabel">
+        <label for="complexity">02 / COMPLEXIDADE</label>
+        <output id="complexity-label">MÉDIA</output>
+      </div>
+
+      <input id="complexity" type="range" min="1" max="3" value="2">
+
+      <div class="range">
+        <span>BAIXA</span>
+        <span>MÉDIA</span>
+        <span>ALTA</span>
+      </div>
+
+      <p class="note">
+        ◈ Ajuste a complexidade para modificar a geometria e os detalhes da visualização.
+      </p>
+    </aside>
+
+    <section class="center">
+      <section class="panel viewer">
+        <div class="viewerhead">
+          <div>
+            <div class="eyebrow">03 / RENDERIZAÇÃO EM TEMPO REAL</div>
+            <h1 id="shape-title">ESFERA</h1>
+            <p id="shape-subtitle">Uma superfície perfeitamente simétrica.</p>
+          </div>
+
+          <div>
+            <button id="reset" title="Redefinir câmera">↻</button>
+            <button id="rotate" title="Pausar ou retomar rotação">Ⅱ</button>
+          </div>
+        </div>
+
+        <div id="scene">
+          <div id="loading">INICIALIZANDO MOTOR 3D...</div>
+          <div class="hint">ARRASTE PARA ROTACIONAR · SCROLL PARA ZOOM</div>
+        </div>
+      </section>
+
+      <div class="controls">
+        <section class="panel mini">
+          <div class="eyebrow">04 / PARÂMETROS</div>
+
+          <label for="scale">
+            Escala <output id="scale-out">1.00×</output>
+          </label>
+          <input id="scale" type="range" min="0.6" max="1.6" step="0.05" value="1">
+
+          <label for="wire">
+            Intensidade da malha <output id="wire-out">65%</output>
+          </label>
+          <input id="wire" type="range" min="15" max="100" value="65">
+        </section>
+
+        <section class="panel mini">
+          <div class="eyebrow">05 / VISUALIZAÇÃO</div>
+
+          <div class="modes">
+            <button class="active" data-mode="solid">SÓLIDA</button>
+            <button data-mode="wire">MALHA</button>
+            <button data-mode="points">PONTOS</button>
+          </div>
+
+          <p class="render"><i></i> RENDERIZAÇÃO ATIVA</p>
+        </section>
+      </div>
+    </section>
+
+    <aside class="right">
+      <section class="panel math" id="matematica">
+        <div class="eyebrow">06 / FICHA MATEMÁTICA</div>
+
+        <div class="mathhead">
+          <h2 id="math-title">Esfera</h2>
+          <span id="index">GEO.01</span>
+        </div>
+
+        <p id="description">
+          Conjunto de pontos no espaço à mesma distância de um centro.
+        </p>
+
+        <div class="formula-block">
+          <div class="eyebrow">EQUAÇÃO PRINCIPAL</div>
+          <div id="formula" class="formula">x² + y² + z² = r²</div>
+        </div>
+
+        <div class="formula-block">
+          <div class="eyebrow">REPRESENTAÇÃO PARAMÉTRICA</div>
+          <div id="param" class="formula small">
+            x = r sen(φ) cos(θ)<br>
+            y = r sen(φ) sen(θ)<br>
+            z = r cos(φ)
+          </div>
+        </div>
+      </section>
+
+      <section class="panel properties">
+        <div class="eyebrow">07 / PROPRIEDADES</div>
+        <div id="props"></div>
+      </section>
+
+      <section class="panel insight" id="sobre">
+        <strong>∑</strong>
+        <div>
+          <div class="eyebrow">NOTA DE LABORATÓRIO</div>
+          <p id="insight">
+            A esfera possui simetria em todas as direções que passam pelo centro.
+          </p>
+        </div>
+      </section>
+
+      <div class="mathfooter">
+        GEOMETRIA <b>×</b> ARTE <b>×</b> MATEMÁTICA
+      </div>
+    </aside>
+  </main>
+
+  <footer>
+    <span>© <span id="year"></span> PADRÕES INVISÍVEIS</span>
+    <span>CRIADO POR <strong>MARIANA LIMA CORRÊA FÉ</strong></span>
+    <span>UM LABORATÓRIO DE FORMAS E IDEIAS</span>
   </footer>
-
 </body>
 </html>
