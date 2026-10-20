@@ -2,583 +2,613 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-const container = document.getElementById("scene3d");
-const shapeName = document.getElementById("shapeName");
-const shapeNumber = document.getElementById("shapeNumber");
-const generateBtn = document.getElementById("generateBtn");
-const searchForm = document.getElementById("searchForm");
-const searchInput = document.getElementById("shapeSearch");
-const searchMessage = document.getElementById("searchMessage");
-const complexityInput = document.getElementById("complexity");
-const complexityValue = document.getElementById("complexityValue");
-const formulaTitle = document.getElementById("formulaTitle");
-const formulaEquation = document.getElementById("formulaEquation");
-const formulaExplanation = document.getElementById("formulaExplanation");
-const formulaDetails = document.getElementById("formulaDetails");
-const shapeButtons = document.querySelectorAll(".shape-btn");
+const $ = (id) => document.getElementById(id);
 
-const scene = new THREE.Scene();
-scene.background = new THREE.Color("#080a18");
+const shapes = [
+  {
+    id: "sphere",
+    name: "Esfera",
+    sub: "Uma superfície perfeitamente simétrica.",
+    desc: "Conjunto de pontos no espaço à mesma distância de um centro.",
+    formula: "x² + y² + z² = r²",
+    param: "x = r sen(φ) cos(θ)<br>y = r sen(φ) sen(θ)<br>z = r cos(φ)",
+    props: [
+      "Superfície fechada e sem arestas.",
+      "Simetria em todas as direções que passam pelo centro.",
+      "Área: A = 4πr² · Volume: V = 4/3 πr³."
+    ],
+    insight: "A esfera minimiza a área de superfície entre os corpos que encerram o mesmo volume."
+  },
+  {
+    id: "torus",
+    name: "Toro",
+    sub: "Uma superfície fechada com um furo central.",
+    desc: "Superfície gerada pela rotação de um círculo em torno de um eixo.",
+    formula: "(√(x² + y²) − R)² + z² = r²",
+    param: "x = (R + r cos(v)) cos(u)<br>y = (R + r cos(v)) sen(u)<br>z = r sen(v)",
+    props: [
+      "R é o raio maior; r é o raio menor.",
+      "Área: A = 4π²Rr.",
+      "Volume: V = 2π²Rr²."
+    ],
+    insight: "O toro aparece em objetos como boias, anéis e estruturas rotacionais."
+  },
+  {
+    id: "spiral",
+    name: "Espiral",
+    sub: "Uma curva que gira enquanto sobe.",
+    desc: "Curva espacial que combina rotação angular com variação vertical.",
+    formula: "x = a cos(t), y = a sen(t)",
+    param: "x = a cos(t)<br>y = a sen(t)<br>z = bt",
+    props: [
+      "a controla o raio; b controla a subida.",
+      "Uma volta corresponde a Δt = 2π.",
+      "O passo da hélice é 2πb."
+    ],
+    insight: "Hélices aparecem em molas, escadas helicoidais e estruturas como o DNA."
+  },
+  {
+    id: "mobius",
+    name: "Fita de Möbius",
+    sub: "Uma superfície com uma face e uma borda.",
+    desc: "Superfície não orientável formada ao unir uma fita após meia torção.",
+    formula: "Superfície não orientável",
+    param: "x = (1 + v/2 cos(u/2)) cos(u)<br>y = (1 + v/2 cos(u/2)) sen(u)<br>z = v/2 sen(u/2)",
+    props: [
+      "Possui uma única face e uma única borda.",
+      "É uma superfície não orientável.",
+      "u e v descrevem a torção e a largura."
+    ],
+    insight: "A fita de Möbius é um exemplo clássico de como a topologia desafia nossa intuição."
+  },
+  {
+    id: "cone",
+    name: "Cone",
+    sub: "Uma superfície que converge para um vértice.",
+    desc: "Superfície que liga um vértice aos pontos de uma base circular.",
+    formula: "x² + y² = (kz)²",
+    param: "x = ρ cos(θ)<br>y = ρ sen(θ)<br>z = h(1 − ρ/R)",
+    props: [
+      "Possui uma base circular e um vértice.",
+      "Seções paralelas à base são circulares.",
+      "Volume: V = 1/3 πR²h."
+    ],
+    insight: "Seções planas de um cone podem formar círculos, elipses, parábolas ou hipérboles."
+  },
+  {
+    id: "cylinder",
+    name: "Cilindro",
+    sub: "Seções circulares paralelas ao longo de um eixo.",
+    desc: "Superfície com seção circular constante ao longo do eixo.",
+    formula: "x² + y² = r²",
+    param: "x = r cos(θ)<br>y = r sen(θ)<br>z = h",
+    props: [
+      "Raio constante ao longo do eixo.",
+      "Área lateral: A = 2πrh.",
+      "Volume: V = πr²h."
+    ],
+    insight: "Cilindros são usados em engenharia, arquitetura e mecânica."
+  },
+  {
+    id: "hypercube",
+    name: "Hipercubo",
+    sub: "Projeção 3D de uma estrutura de quatro dimensões.",
+    desc: "O tesserato é o análogo quadridimensional do cubo.",
+    formula: "xᵢ ∈ {−1, +1}, i = 1…4",
+    param: "16 vértices<br>32 arestas<br>24 faces quadradas<br>8 células cúbicas",
+    props: [
+      "É o hipercubo de dimensão 4.",
+      "Possui 16 vértices e 32 arestas.",
+      "A cena mostra uma projeção tridimensional."
+    ],
+    insight: "Projeções de hipercubos ajudam a explorar visualmente dimensões além das três que percebemos."
+  },
+  {
+    id: "fractal",
+    name: "Fractal",
+    sub: "Detalhes que reaparecem em diferentes escalas.",
+    desc: "Estrutura com autossimilaridade exata ou aproximada.",
+    formula: "N(ε) ∝ ε⁻ᴰ",
+    param: "D = dimensão fractal<br>ε = escala de observação<br>N(ε) = número de partes",
+    props: [
+      "Pode apresentar autossimilaridade.",
+      "A dimensão fractal pode não ser inteira.",
+      "O padrão depende da regra de construção."
+    ],
+    insight: "Fractais ajudam a modelar padrões naturais e sistemas dinâmicos."
+  },
+  {
+    id: "enneper",
+    name: "Superfície de Enneper",
+    sub: "Uma superfície mínima de curvatura média zero.",
+    desc: "Superfície mínima clássica parametrizada no espaço tridimensional.",
+    formula: "H = (k₁ + k₂)/2 = 0",
+    param: "x = u − u³/3 + uv²<br>y = v − v³/3 + vu²<br>z = u² − v²",
+    props: [
+      "Curvatura média H igual a zero.",
+      "É uma superfície mínima clássica.",
+      "Pode apresentar auto-interseções."
+    ],
+    insight: "Superfícies mínimas aparecem em problemas de área mínima e em películas de sabão."
+  },
+  {
+    id: "chaos",
+    name: "Caos",
+    sub: "Trajetórias complexas a partir de regras determinísticas.",
+    desc: "Visualização de uma trajetória do sistema não linear de Lorenz.",
+    formula: "ẋ = σ(y − x)",
+    param: "ẏ = x(ρ − z) − y<br>ż = xy − βz<br>σ = 10, ρ = 28, β = 8/3",
+    props: [
+      "Sistema determinístico e não linear.",
+      "Pequenas diferenças iniciais podem crescer.",
+      "A trajetória típica não se repete periodicamente."
+    ],
+    insight: "Caos determinístico não é ausência de regras: a complexidade emerge de equações definidas."
+  }
+];
 
-const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
-camera.position.set(0, 0, 9);
+let scene, camera, renderer, controls, group;
+let rotating = true;
+let mode = "solid";
+let level = 2;
+let scale = 1;
+let wire = 0.65;
+let current = shapes[0];
 
-const renderer = new THREE.WebGLRenderer({
-  antialias: true,
-  alpha: true
-});
+const sceneElement = $("scene");
 
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setSize(container.clientWidth, container.clientHeight);
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-container.appendChild(renderer.domElement);
+function init() {
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x090a0c);
 
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.055;
-controls.rotateSpeed = 0.85;
-controls.zoomSpeed = 0.8;
-controls.minDistance = 3;
-controls.maxDistance = 18;
-controls.enablePan = true;
-controls.panSpeed = 0.6;
+  camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+  camera.position.set(4.3, 3.1, 5.6);
 
-scene.add(new THREE.AmbientLight(0x8299ff, 1.7));
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  sceneElement.appendChild(renderer.domElement);
 
-const light1 = new THREE.PointLight(0x55f5ff, 45);
-light1.position.set(4, 4, 5);
-scene.add(light1);
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
 
-const light2 = new THREE.PointLight(0x9855ff, 35);
-light2.position.set(-4, -2, -4);
-scene.add(light2);
+  scene.add(new THREE.AmbientLight(0xffffff, 1.4));
 
-const root = new THREE.Group();
-scene.add(root);
+  const light = new THREE.DirectionalLight(0xffffff, 3);
+  light.position.set(4, 5, 4);
+  scene.add(light);
 
-let currentShape = "spiral";
-let complexity = 60;
-let composition = 1;
-let currentObjects = [];
-let resizeObserver;
+  const rim = new THREE.PointLight(0xb8c0cb, 16, 14);
+  rim.position.set(-3, 1, 2);
+  scene.add(rim);
 
-const material = (color = 0x70f7ff, opacity = 0.9) =>
-  new THREE.MeshStandardMaterial({
-    color,
-    emissive: color,
-    emissiveIntensity: 0.55,
-    metalness: 0.55,
-    roughness: 0.25,
-    transparent: opacity < 1,
-    opacity,
-    side: THREE.DoubleSide
+  const grid = new THREE.GridHelper(12, 24, 0x343941, 0x202329);
+  grid.position.y = -1.6;
+  grid.material.transparent = true;
+  grid.material.opacity = 0.6;
+  scene.add(grid);
+
+  buildList();
+  selectShape("sphere");
+  resize();
+
+  window.addEventListener("resize", resize);
+  $("loading").style.display = "none";
+
+  animate();
+}
+
+function resize() {
+  if (!renderer) return;
+
+  const width = sceneElement.clientWidth;
+  const height = sceneElement.clientHeight;
+
+  renderer.setSize(width, height, false);
+  camera.aspect = width / Math.max(height, 1);
+  camera.updateProjectionMatrix();
+}
+
+function disposeGroup() {
+  if (!group) return;
+
+  scene.remove(group);
+
+  group.traverse((object) => {
+    if (object.geometry) object.geometry.dispose();
+
+    if (object.material) {
+      const materials = Array.isArray(object.material)
+        ? object.material
+        : [object.material];
+
+      materials.forEach((material) => material.dispose());
+    }
   });
 
-function addObject(object) {
-  root.add(object);
-  currentObjects.push(object);
-  return object;
+  group = null;
 }
 
-function addLine(points, color = 0x70f7ff, opacity = 0.9) {
-  const geometry = new THREE.BufferGeometry().setFromPoints(points);
-  const line = new THREE.Line(
-    geometry,
-    new THREE.LineBasicMaterial({
-      color,
-      transparent: true,
-      opacity
-    })
+function makeSurface(fn, a, b, c, d, divisions) {
+  const positions = [];
+  const indices = [];
+  const rows = Math.floor(divisions * 0.7);
+
+  for (let i = 0; i <= divisions; i++) {
+    for (let j = 0; j <= rows; j++) {
+      const u = a + (b - a) * i / divisions;
+      const v = c + (d - c) * j / rows;
+      const point = fn(u, v);
+
+      positions.push(point.x, point.y, point.z);
+    }
+  }
+
+  for (let i = 0; i < divisions; i++) {
+    for (let j = 0; j < rows; j++) {
+      const p = i * (rows + 1) + j;
+      const q = p + rows + 1;
+
+      indices.push(p, q, p + 1, q, q + 1, p + 1);
+    }
+  }
+
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(positions, 3)
   );
-  return addObject(line);
+  geometry.setIndex(indices);
+  geometry.computeVertexNormals();
+
+  return geometry;
 }
 
-function clearObjects() {
-  for (const object of currentObjects) {
-    root.remove(object);
+function makeGeometry(id) {
+  const n = level === 1 ? 18 : level === 2 ? 42 : 85;
 
-    object.traverse(child => {
-      child.geometry?.dispose();
+  if (id === "sphere") {
+    return new THREE.SphereGeometry(1.25, n, Math.floor(n * 0.65));
+  }
 
-      if (Array.isArray(child.material)) {
-        child.material.forEach(m => m.dispose());
-      } else {
-        child.material?.dispose();
+  if (id === "torus") {
+    return new THREE.TorusGeometry(0.88, 0.34, Math.floor(n / 3), n * 2);
+  }
+
+  if (id === "cone") {
+    return new THREE.ConeGeometry(1, 2.4, n, level * 3, true);
+  }
+
+  if (id === "cylinder") {
+    return new THREE.CylinderGeometry(1, 1, 2.2, n, level * 3, true);
+  }
+
+  if (id === "spiral") {
+    const points = [];
+    const turns = level * 3 + 5;
+
+    for (let i = 0; i <= turns * 35; i++) {
+      const t = i / (turns * 35) * turns * Math.PI * 2;
+      const radius = 0.15 + t * 0.025;
+
+      points.push(new THREE.Vector3(
+        radius * Math.cos(t),
+        i / (turns * 35) * 2.5 - 1.25,
+        radius * Math.sin(t)
+      ));
+    }
+
+    return new THREE.TubeGeometry(
+      new THREE.CatmullRomCurve3(points),
+      points.length - 1,
+      0.018,
+      6,
+      false
+    );
+  }
+
+  if (id === "mobius") {
+    return makeSurface((u, v) => new THREE.Vector3(
+      (1 + v / 2 * Math.cos(u / 2)) * Math.cos(u),
+      (1 + v / 2 * Math.cos(u / 2)) * Math.sin(u),
+      v / 2 * Math.sin(u / 2)
+    ), 0, Math.PI * 2, -0.65, 0.65, n);
+  }
+
+  if (id === "enneper") {
+    return makeSurface((u, v) => new THREE.Vector3(
+      u - u ** 3 / 3 + u * v ** 2,
+      v - v ** 3 / 3 + v * u ** 2,
+      u ** 2 - v ** 2
+    ), -1.35, 1.35, -1.35, 1.35, n);
+  }
+
+  if (id === "hypercube") {
+    const vertices = [];
+
+    for (let i = 0; i < 16; i++) {
+      const x = i & 1 ? 1 : -1;
+      const y = i & 2 ? 1 : -1;
+      const z = i & 4 ? 1 : -1;
+      const w = i & 8 ? 1 : -1;
+      const factor = 1 / (2.8 - w * 0.35);
+
+      vertices.push(new THREE.Vector3(
+        (x + w * 0.45) * factor,
+        (y + w * 0.25) * factor,
+        (z - w * 0.4) * factor
+      ));
+    }
+
+    const points = [];
+
+    for (let i = 0; i < 16; i++) {
+      for (let bit = 0; bit < 4; bit++) {
+        const j = i ^ (1 << bit);
+        if (i < j) points.push(vertices[i], vertices[j]);
+      }
+    }
+
+    return new THREE.BufferGeometry().setFromPoints(points);
+  }
+
+  if (id === "fractal") {
+    const tetrahedron = [
+      new THREE.Vector3(0, 1.3, 0),
+      new THREE.Vector3(-1, -0.7, 1),
+      new THREE.Vector3(1, -0.7, 1),
+      new THREE.Vector3(0, -0.7, -1)
+    ];
+
+    let faces = [
+      [tetrahedron[0], tetrahedron[1], tetrahedron[2]],
+      [tetrahedron[0], tetrahedron[2], tetrahedron[3]],
+      [tetrahedron[0], tetrahedron[3], tetrahedron[1]],
+      [tetrahedron[1], tetrahedron[3], tetrahedron[2]]
+    ];
+
+    const iterations = level === 1 ? 2 : level === 2 ? 3 : 4;
+
+    for (let k = 0; k < iterations; k++) {
+      const next = [];
+
+      for (const [a, b, c] of faces) {
+        const ab = a.clone().add(b).multiplyScalar(0.5);
+        const bc = b.clone().add(c).multiplyScalar(0.5);
+        const ca = c.clone().add(a).multiplyScalar(0.5);
+
+        next.push([a, ab, ca], [ab, b, bc], [ca, bc, c], [ab, bc, ca]);
+      }
+
+      faces = next;
+    }
+
+    const positions = [];
+
+    faces.forEach((face) => {
+      face.forEach((point) => positions.push(point.x, point.y, point.z));
+    });
+
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(positions, 3)
+    );
+    geometry.computeVertexNormals();
+
+    return geometry;
+  }
+
+  if (id === "chaos") {
+    const points = [];
+    let x = 0.1;
+    let y = 0;
+    let z = 0;
+
+    const dt = 0.005;
+    const count = level === 1 ? 4000 : level === 2 ? 8500 : 14000;
+
+    for (let i = 0; i < count; i++) {
+      const dx = 10 * (y - x);
+      const dy = x * (28 - z) - y;
+      const dz = x * y - (8 / 3) * z;
+
+      x += dx * dt;
+      y += dy * dt;
+      z += dz * dt;
+
+      if (i % 2 === 0) {
+        points.push(new THREE.Vector3(x / 12, (z - 25) / 12, y / 12));
+      }
+    }
+
+    return new THREE.TubeGeometry(
+      new THREE.CatmullRomCurve3(points),
+      points.length - 1,
+      0.009,
+      5,
+      false
+    );
+  }
+
+  return new THREE.SphereGeometry(1, n, n);
+}
+
+function selectShape(id) {
+  current = shapes.find((shape) => shape.id === id) || shapes[0];
+
+  disposeGroup();
+
+  const geometry = makeGeometry(id);
+  group = new THREE.Group();
+
+  const lineShape = ["spiral", "hypercube", "chaos"].includes(id);
+  const surfaceShape = ["mobius", "enneper", "fractal"].includes(id);
+
+  const material = new THREE.MeshStandardMaterial({
+    color: 0xcbd1d9,
+    metalness: 0.55,
+    roughness: 0.3,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.88
+  });
+
+  let object;
+
+  if (lineShape) {
+    object = new THREE.LineSegments(
+      geometry,
+      new THREE.LineBasicMaterial({ color: 0xe1e4e9 })
+    );
+  } else {
+    object = new THREE.Mesh(geometry, material);
+  }
+
+  group.add(object);
+
+  if (mode === "wire" && !lineShape) {
+    const wireframe = new THREE.LineSegments(
+      new THREE.WireframeGeometry(geometry),
+      new THREE.LineBasicMaterial({
+        color: 0xf2f3f5,
+        transparent: true,
+        opacity: wire
+      })
+    );
+
+    group.add(wireframe);
+  }
+
+  if (mode === "points") {
+    group.add(new THREE.Points(
+      geometry.clone(),
+      new THREE.PointsMaterial({ color: 0xffffff, size: 0.025 })
+    ));
+  }
+
+  if (surfaceShape && mode === "solid") {
+    material.side = THREE.DoubleSide;
+  }
+
+  group.scale.setScalar(scale);
+  scene.add(group);
+
+  $("shape-title").textContent = current.name.toUpperCase();
+  $("shape-subtitle").textContent = current.sub;
+  $("math-title").textContent = current.name;
+  $("index").textContent = "GEO." + String(shapes.indexOf(current) + 1).padStart(2, "0");
+  $("description").textContent = current.desc;
+  $("formula").textContent = current.formula;
+  $("param").innerHTML = current.param;
+
+  $("props").innerHTML = current.props
+    .map((property) => `<div class="property">${escapeHTML(property)}</div>`)
+    .join("");
+
+  $("insight").textContent = current.insight;
+
+  document.querySelectorAll(".shape-option").forEach((button) => {
+    button.classList.toggle("active", button.dataset.id === id);
+  });
+
+  camera.position.set(4.3, 3.1, 5.6);
+  controls.target.set(0, 0, 0);
+  controls.update();
+}
+
+function escapeHTML(text) {
+  return text.replace(/[&<>"]/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;"
+  })[character]);
+}
+
+function buildList() {
+  const icons = ["◉", "◎", "⌁", "∞", "△", "▱", "⬡", "✳", "◇", "∿"];
+
+  $("shape-list").innerHTML = shapes.map((shape, index) => `
+    <button class="shape-option${index === 0 ? " active" : ""}" data-id="${shape.id}">
+      <span class="shape-icon">${icons[index]}</span>
+      <span class="shape-name">${shape.name}</span>
+      <span class="shape-num">${String(index + 1).padStart(2, "0")}</span>
+    </button>
+  `).join("");
+
+  $("shape-list").addEventListener("click", (event) => {
+    const button = event.target.closest("[data-id]");
+    if (button) selectShape(button.dataset.id);
+  });
+}
+
+$("complexity").addEventListener("input", (event) => {
+  level = Number(event.target.value);
+  $("complexity-label").textContent = ["", "BAIXA", "MÉDIA", "ALTA"][level];
+  selectShape(current.id);
+});
+
+$("scale").addEventListener("input", (event) => {
+  scale = Number(event.target.value);
+  $("scale-out").textContent = scale.toFixed(2) + "×";
+
+  if (group) group.scale.setScalar(scale);
+});
+
+$("wire").addEventListener("input", (event) => {
+  wire = Number(event.target.value) / 100;
+  $("wire-out").textContent = event.target.value + "%";
+
+  if (group) {
+    group.traverse((object) => {
+      if (object.material && object.material.wireframe) {
+        object.material.opacity = wire;
       }
     });
   }
-
-  currentObjects = [];
-}
-
-function buildSpiral() {
-  const points = [];
-  const turns = 9 + complexity * 0.12;
-  const count = complexity * 24;
-
-  for (let i = 0; i <= count; i++) {
-    const t = i / count;
-    const angle = t * turns * Math.PI * 2;
-    const radius = 0.12 + t * 2.3;
-
-    points.push(new THREE.Vector3(
-      Math.cos(angle) * radius,
-      Math.sin(angle) * radius,
-      (t - 0.5) * 2.2
-    ));
-  }
-
-  addLine(points, 0x8b65ff);
-
-  for (let i = 0; i < points.length; i += Math.max(1, Math.floor(count / 60))) {
-    const dot = new THREE.Mesh(
-      new THREE.SphereGeometry(0.035, 8, 8),
-      material(i % 2 ? 0x70f7ff : 0xb18aff)
-    );
-
-    dot.position.copy(points[i]);
-    addObject(dot);
-  }
-}
-
-function buildSphere() {
-  const geometry = new THREE.IcosahedronGeometry(2, Math.min(4, Math.floor(complexity / 25)));
-  const wire = new THREE.Mesh(geometry, material(0x6df7ff, 0.18));
-  addObject(wire);
-
-  const edges = new THREE.LineSegments(
-    new THREE.EdgesGeometry(geometry),
-    new THREE.LineBasicMaterial({ color: 0x9b72ff })
-  );
-  addObject(edges);
-
-  const inner = new THREE.Mesh(
-    new THREE.SphereGeometry(1.35, 24, 24),
-    material(0x246dff, 0.12)
-  );
-  addObject(inner);
-}
-
-function buildTorus() {
-  const geometry = new THREE.TorusGeometry(1.45, 0.65, 12, complexity * 2);
-  const mesh = new THREE.Mesh(geometry, material(0x8b65ff, 0.38));
-  addObject(mesh);
-
-  addObject(new THREE.LineSegments(
-    new THREE.EdgesGeometry(geometry, 20),
-    new THREE.LineBasicMaterial({ color: 0x70f7ff })
-  ));
-}
-
-function buildMobius() {
-  const points = [];
-  const faces = [];
-  const steps = complexity * 12;
-  const across = 14;
-
-  for (let i = 0; i <= steps; i++) {
-    const u = i / steps * Math.PI * 2;
-
-    for (let j = 0; j <= across; j++) {
-      const v = (j / across - 0.5) * 1.2;
-      const radius = 1.5 + v * Math.cos(u / 2);
-
-      points.push(
-        radius * Math.cos(u),
-        radius * Math.sin(u),
-        v * Math.sin(u / 2)
-      );
-    }
-  }
-
-  for (let i = 0; i < steps; i++) {
-    for (let j = 0; j < across; j++) {
-      const a = i * (across + 1) + j;
-      const b = a + across + 1;
-
-      faces.push(a, b, a + 1, b, b + 1, a + 1);
-    }
-  }
-
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute("position", new THREE.Float32BufferAttribute(points, 3));
-  geometry.setIndex(faces);
-  geometry.computeVertexNormals();
-
-  addObject(new THREE.Mesh(geometry, material(0x70f7ff, 0.75)));
-}
-
-function buildKnot() {
-  const points = [];
-  const count = complexity * 30;
-
-  for (let i = 0; i <= count; i++) {
-    const t = i / count * Math.PI * 2;
-
-    points.push(new THREE.Vector3(
-      1.6 * (Math.cos(t) + 2 * Math.cos(2 * t)),
-      1.6 * (Math.sin(t) - 2 * Math.sin(2 * t)),
-      1.6 * -Math.sin(3 * t)
-    ).multiplyScalar(0.48));
-  }
-
-  const curve = new THREE.CatmullRomCurve3(points);
-  const geometry = new THREE.TubeGeometry(curve, count, 0.055, 8, true);
-
-  addObject(new THREE.Mesh(geometry, material(0xa177ff)));
-}
-
-function buildHelix() {
-  const points = [];
-  const count = complexity * 25;
-
-  for (let i = 0; i <= count; i++) {
-    const t = i / count * Math.PI * 12;
-
-    points.push(new THREE.Vector3(
-      Math.cos(t) * 1.4,
-      (i / count - 0.5) * 4.5,
-      Math.sin(t) * 1.4
-    ));
-  }
-
-  addLine(points, 0x70f7ff);
-
-  const second = points.map(p =>
-    new THREE.Vector3(-p.x, p.y, -p.z)
-  );
-
-  addLine(second, 0xa177ff);
-}
-
-function buildWave() {
-  const rows = Math.max(10, Math.floor(complexity / 2));
-  const columns = rows * 2;
-  const points = [];
-
-  for (let i = 0; i <= rows; i++) {
-    for (let j = 0; j <= columns; j++) {
-      const x = (j / columns - 0.5) * 4.5;
-      const z = (i / rows - 0.5) * 4.5;
-      const y = 0.45 * Math.sin(x * 2) * Math.cos(z * 2);
-
-      points.push(new THREE.Vector3(x, y, z));
-    }
-  }
-
-  for (let i = 0; i <= rows; i++) {
-    addLine(
-      points.slice(i * (columns + 1), (i + 1) * (columns + 1)),
-      0x70f7ff,
-      0.8
-    );
-  }
-
-  for (let j = 0; j <= columns; j++) {
-    const line = [];
-
-    for (let i = 0; i <= rows; i++) {
-      line.push(points[i * (columns + 1) + j]);
-    }
-
-    addLine(line, 0xa177ff, 0.65);
-  }
-}
-
-function buildCrystal() {
-  const geometry = new THREE.OctahedronGeometry(2, Math.min(4, Math.floor(complexity / 25)));
-  addObject(new THREE.Mesh(geometry, material(0x6df7ff, 0.14)));
-
-  addObject(new THREE.LineSegments(
-    new THREE.EdgesGeometry(geometry),
-    new THREE.LineBasicMaterial({ color: 0xb18aff })
-  ));
-
-  const core = new THREE.Mesh(
-    new THREE.OctahedronGeometry(0.85, 1),
-    material(0x8b65ff, 0.5)
-  );
-
-  addObject(core);
-}
-
-function buildSierpinski() {
-  let points = [
-    new THREE.Vector3(-2, -1.7, 0),
-    new THREE.Vector3(2, -1.7, 0),
-    new THREE.Vector3(0, 1.8, 0)
-  ];
-
-  const all = [];
-  let p = new THREE.Vector3(0, 0, 0);
-
-  for (let i = 0; i < complexity * 100; i++) {
-    const target = points[Math.floor(Math.random() * 3)];
-    p = p.clone().add(target).multiplyScalar(0.5);
-    all.push(p.x, p.y, p.z);
-  }
-
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute("position", new THREE.Float32BufferAttribute(all, 3));
-
-  addObject(new THREE.Points(
-    geometry,
-    new THREE.PointsMaterial({
-      color: 0x70f7ff,
-      size: 0.025,
-      sizeAttenuation: true
-    })
-  ));
-
-  addLine(points.concat(points[0]), 0xa177ff);
-}
-
-function buildKlein() {
-  const points = [];
-  const faces = [];
-  const uCount = Math.max(30, complexity);
-  const vCount = 24;
-
-  for (let i = 0; i <= uCount; i++) {
-    const u = i / uCount * Math.PI * 2;
-
-    for (let j = 0; j <= vCount; j++) {
-      const v = j / vCount * Math.PI * 2;
-
-      const radius = 1.2 + Math.cos(u / 2) * Math.sin(v)
-        - Math.sin(u / 2) * Math.sin(2 * v);
-
-      points.push(
-        radius * Math.cos(u),
-        radius * Math.sin(u),
-        Math.sin(u / 2) * Math.sin(v) + Math.cos(u / 2) * Math.sin(2 * v)
-      );
-    }
-  }
-
-  for (let i = 0; i < uCount; i++) {
-    for (let j = 0; j < vCount; j++) {
-      const a = i * (vCount + 1) + j;
-      const b = a + vCount + 1;
-      faces.push(a, b, a + 1, b, b + 1, a + 1);
-    }
-  }
-
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute("position", new THREE.Float32BufferAttribute(points, 3));
-  geometry.setIndex(faces);
-  geometry.computeVertexNormals();
-
-  addObject(new THREE.Mesh(geometry, material(0x8b65ff, 0.7)));
-}
-
-const catalogue = {
-  spiral: {
-    name: "ESPIRAL DE ARQUIMEDES",
-    title: "Espiral de Arquimedes",
-    equation: "r = a + bθ",
-    explanation: "O raio cresce proporcionalmente ao ângulo. A cada volta, a distância entre os braços da espiral permanece constante.",
-    details: "r é o raio, θ é o ângulo, a é o raio inicial e b determina o crescimento.",
-    build: buildSpiral
-  },
-  sphere: {
-    name: "ESFERA GEOMÉTRICA",
-    title: "Esfera",
-    equation: "x² + y² + z² = R²",
-    explanation: "Todos os pontos da superfície ficam à mesma distância do centro.",
-    details: "x, y e z são coordenadas espaciais e R é o raio.",
-    build: buildSphere
-  },
-  torus: {
-    name: "TORO",
-    title: "Toro",
-    equation: "(√(x²+y²) − R)² + z² = r²",
-    explanation: "O toro é uma superfície em forma de anel, construída pela rotação de um círculo em torno de um eixo externo.",
-    details: "R representa o raio maior e r o raio do tubo.",
-    build: buildTorus
-  },
-  mobius: {
-    name: "FITA DE MÖBIUS",
-    title: "Fita de Möbius",
-    equation: "x = (R + v cos(u/2)) cos(u)",
-    explanation: "A fita de Möbius é uma superfície com apenas um lado e uma única borda.",
-    details: "A parametrização também usa y = (R + v cos(u/2)) sin(u) e z = v sin(u/2).",
-    build: buildMobius
-  },
-  knot: {
-    name: "NÓ TOROIDAL",
-    title: "Nó toroidal",
-    equation: "x = (cos t + 2 cos 2t)",
-    explanation: "Uma curva espacial pode se entrelaçar com ela mesma e formar um nó matemático.",
-    details: "As coordenadas y e z também variam com t; a composição usa uma curva espacial fechada.",
-    build: buildKnot
-  },
-  helix: {
-    name: "HÉLICE",
-    title: "Hélice circular",
-    equation: "x = r cos t, y = r sin t, z = ct",
-    explanation: "A hélice combina uma rotação circular com um avanço constante ao longo de um eixo.",
-    details: "r é o raio e c controla o avanço por unidade de ângulo.",
-    build: buildHelix
-  },
-  wave: {
-    name: "SUPERFÍCIE ONDULATÓRIA",
-    title: "Onda matemática",
-    equation: "z = A sin(kx) cos(ky)",
-    explanation: "Funções trigonométricas produzem uma superfície que sobe e desce de forma periódica.",
-    details: "A controla a amplitude e k controla a frequência espacial.",
-    build: buildWave
-  },
-  crystal: {
-    name: "CRISTAL GEOMÉTRICO",
-    title: "Octaedro",
-    equation: "|x| + |y| + |z| = R",
-    explanation: "O octaedro é um poliedro com oito faces triangulares e simetria em três dimensões.",
-    details: "A superfície é formada por faces planas que se encontram em vértices.",
-    build: buildCrystal
-  },
-  sierpinski: {
-    name: "TRIÂNGULO DE SIERPIŃSKI",
-    title: "Triângulo de Sierpiński",
-    equation: "Pₙ₊₁ = (Pₙ + V) / 2",
-    explanation: "Uma regra repetida escolhe um dos vértices e aproxima o ponto atual da metade do caminho até ele.",
-    details: "A repetição revela uma estrutura fractal autossimilar.",
-    build: buildSierpinski
-  },
-  klein: {
-    name: "SUPERFÍCIE DE KLEIN",
-    title: "Garrafa de Klein",
-    equation: "Superfície paramétrica em u e v",
-    explanation: "A garrafa de Klein é uma superfície não orientável que, no espaço tridimensional comum, precisa se intersectar para ser representada.",
-    details: "Esta é uma visualização paramétrica ilustrativa, não uma imersão perfeita sem autointerseções.",
-    build: buildKlein
-  }
-};
-
-function normalize(text) {
-  return text
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .trim();
-}
-
-const aliases = {
-  "espiral": "spiral",
-  "espirais": "spiral",
-  "arquimedes": "spiral",
-  "esfera": "sphere",
-  "esferica": "sphere",
-  "bola": "sphere",
-  "globo": "sphere",
-  "torus": "torus",
-  "toro": "torus",
-  "donut": "torus",
-  "anel": "torus",
-  "mobius": "mobius",
-  "moebius": "mobius",
-  "fita": "mobius",
-  "fita de mobius": "mobius",
-  "no": "knot",
-  "no toroidal": "knot",
-  "trefoil": "knot",
-  "helice": "helix",
-  "onda": "wave",
-  "ondas": "wave",
-  "superficie": "wave",
-  "cristal": "crystal",
-  "octaedro": "crystal",
-  "poliedro": "crystal",
-  "sierpinski": "sierpinski",
-  "fractal": "sierpinski",
-  "fractais": "sierpinski",
-  "triangulo": "sierpinski",
-  "triangulo de sierpinski": "sierpinski",
-  "klein": "klein",
-  "garrafa de klein": "klein"
-};
-
-function selectShape(key) {
-  const item = catalogue[key];
-  if (!item) return;
-
-  currentShape = key;
-  composition++;
-
-  clearObjects();
-  item.build();
-
-  shapeName.textContent = item.name;
-  shapeNumber.textContent = `FORM. ${String(composition).padStart(3, "0")}`;
-
-  formulaTitle.textContent = item.title;
-  formulaEquation.textContent = item.equation;
-  formulaExplanation.textContent = item.explanation;
-  formulaDetails.textContent = item.details;
-
-  shapeButtons.forEach(button => {
-    button.classList.toggle("active", button.dataset.shape === key);
-  });
-
-  searchMessage.textContent = `Explorando: ${item.title}. Arraste o objeto para observar diferentes ângulos.`;
-}
-
-searchForm.addEventListener("submit", event => {
-  event.preventDefault();
-
-  const query = normalize(searchInput.value);
-  const key = aliases[query];
-
-  if (key && catalogue[key]) {
-    selectShape(key);
-  } else if (catalogue[query]) {
-    selectShape(query);
-  } else {
-    searchMessage.textContent =
-      "Ainda não temos essa forma no catálogo. Experimente: esfera, toro, espiral, Möbius, hélice, onda, cristal, fractal ou garrafa de Klein.";
-  }
 });
 
-shapeButtons.forEach(button => {
+document.querySelectorAll("[data-mode]").forEach((button) => {
   button.addEventListener("click", () => {
-    selectShape(button.dataset.shape);
+    mode = button.dataset.mode;
+
+    document.querySelectorAll("[data-mode]").forEach((item) => {
+      item.classList.toggle("active", item === button);
+    });
+
+    selectShape(current.id);
   });
 });
 
-generateBtn.addEventListener("click", () => {
-  const keys = Object.keys(catalogue);
-  const choices = keys.filter(key => key !== currentShape);
-  const next = choices[Math.floor(Math.random() * choices.length)];
-  selectShape(next);
+$("reset").addEventListener("click", () => {
+  camera.position.set(4.3, 3.1, 5.6);
+  controls.target.set(0, 0, 0);
+  controls.update();
 });
 
-complexityInput.addEventListener("input", () => {
-  complexity = Number(complexityInput.value);
-  complexityValue.textContent = complexity;
-
-  selectShape(currentShape);
+$("rotate").addEventListener("click", () => {
+  rotating = !rotating;
+  $("rotate").textContent = rotating ? "Ⅱ" : "▶";
 });
 
-function resizeRenderer() {
-  const w = container.clientWidth;
-  const h = container.clientHeight;
-
-  if (!w || !h) return;
-
-  camera.aspect = w / h;
-  camera.updateProjectionMatrix();
-  renderer.setSize(w, h);
-}
-
-resizeObserver = new ResizeObserver(resizeRenderer);
-resizeObserver.observe(container);
+$("year").textContent = new Date().getFullYear();
 
 function animate() {
   requestAnimationFrame(animate);
-  controls.update();
-  renderer.render(scene, camera);
+
+  if (controls) controls.update();
+  if (rotating && group) group.rotation.y += 0.0025;
+
+  if (renderer && scene && camera) {
+    renderer.render(scene, camera);
+  }
 }
 
-selectShape("spiral");
-resizeRenderer();
-animate();
+try {
+  init();
+} catch (error) {
+  console.error("Erro ao iniciar a visualização 3D:", error);
+  $("loading").textContent = "ERRO AO CARREGAR A CENA 3D. VERIFIQUE O CONSOLE.";
+}
